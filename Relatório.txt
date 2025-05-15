@@ -6,7 +6,7 @@ Os gráficos utilizados neste relatório foram gerados a partir do script dispon
 
 https://github.com/gustavor8/challenge-alura-telecom-x
 
-Gráficos Utilizados
+Gráficos Utilizado
 1. Distribuição do Tipo de Contrato entre Clientes Ativos e Evasivos
 Gráfico: Gráfico de barras
 
