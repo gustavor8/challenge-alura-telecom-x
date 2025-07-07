@@ -3,7 +3,10 @@ import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 # Carregar os dados
 url = "https://raw.githubusercontent.com/alura-cursos/challenge2-data-science/refs/heads/main/TelecomX_Data.json"
@@ -481,3 +484,148 @@ fig.update_layout(
 )
 
 fig.show()
+
+
+
+# ==============================================
+### Continuação chalen-telecom-x - desafio final
+# ==============================================
+
+# MATRIZ DE CORRELAÇÃO
+df_corr = df_encoded.corr(numeric_only=True)
+
+plt.figure(figsize=(16, 12))
+sns.heatmap(
+    df_corr,
+    annot=True,
+    fmt=".2f",
+    cmap="coolwarm",
+    linewidths=0.5,
+    vmin=-1, vmax=1,
+    square=True,
+    cbar_kws={"shrink": 0.8}
+)
+
+plt.title("Matriz de Correlação entre Variáveis Numéricas", fontsize=16, pad=20)
+plt.xticks(rotation=45, ha='right')
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+# INSIGHT PRINCIPAL
+correlacoes_evasao = df_corr['Evasao'].sort_values(ascending=False)
+print("\nVariáveis mais correlacionadas com a Evasão:\n")
+print(correlacoes_evasao)
+
+
+# BOX PLOT: Tempo de Contrato vs Evasão
+plt.figure(figsize=(10, 6))
+sns.boxplot(
+    data=df_final,
+    x='Evasao',
+    y='Meses_Contrato',
+    palette='Set2'
+)
+
+plt.title('Distribuição do Tempo de Contrato por Status de Evasão', fontsize=16)
+plt.xlabel('Status do Cliente', fontsize=12)
+plt.ylabel('Meses de Contrato', fontsize=12)
+plt.xticks([0, 1], ['Continuam na base', 'Saíram da base'])
+
+plt.tight_layout()
+plt.show()
+
+
+# BOX PLOT: Total Gasto vs Evasão
+plt.figure(figsize=(10, 6))
+sns.boxplot(
+    data=df_final,
+    x='Evasao',
+    y='Cobranca_Total',
+    palette='Set2'
+)
+
+plt.title('Distribuição do Total Gasto por Status de Evasão', fontsize=16)
+plt.xlabel('Status do Cliente', fontsize=12)
+plt.ylabel('Cobrança Total (R$)', fontsize=12)
+plt.xticks([0, 1], ['Continuam na base', 'Saíram da base'])
+
+plt.tight_layout()
+plt.show()
+
+
+
+# SCATTER PLOT: Tempo de Contrato vs Total Gasto vs Evasão
+plt.figure(figsize=(12, 8))
+sns.scatterplot(
+    data=df_final,
+    x='Meses_Contrato',
+    y='Cobranca_Total',
+    hue='Evasao',
+    palette='Set2',
+    alpha=0.7
+)
+
+plt.title('Tempo de Contrato vs Total Gasto por Status de Evasão', fontsize=16)
+plt.xlabel('Meses de Contrato', fontsize=12)
+plt.ylabel('Cobrança Total (R$)', fontsize=12)
+plt.legend(title='Evasão', loc='upper left')
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+
+
+# DIVISÃO DO CONJUNTO EM TREINO E TESTE
+X = df_encoded.drop('Evasao', axis=1)
+y = df_encoded['Evasao']
+
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.3,  
+    random_state=42, 
+    stratify=y       
+)
+
+# Mostrar formatos das divisões
+# print(f"Tamanho do conjunto de treino: {X_train.shape}")
+# print(f"Tamanho do conjunto de teste: {X_test.shape}")
+# print(f"Proporção de evasão no treino: {y_train.mean():.2%}")
+# print(f"Proporção de evasão no teste: {y_test.mean():.2%}")
+
+
+
+# CRIAÇÃO DOS MODELOS
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# MODELO 1: REGRESSÃO LOGÍSTICA
+logistic_model = LogisticRegression(max_iter=1000, random_state=42)
+logistic_model.fit(X_train_scaled, y_train)
+
+y_pred_logistic = logistic_model.predict(X_test_scaled)
+
+
+print("=== Regressão Logística ===")
+print(f"Acurácia: {accuracy_score(y_test, y_pred_logistic):.2%}")
+print("\nRelatório de Classificação:")
+print(classification_report(y_test, y_pred_logistic))
+print("\nMatriz de Confusão:")
+print(confusion_matrix(y_test, y_pred_logistic))
+
+
+#  RANDOM FOREST (SEM NORMALIZAÇÃO)
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+y_pred_rf = rf_model.predict(X_test)
+
+# Avaliar
+print("\n=== Random Forest ===")
+print(f"Acurácia: {accuracy_score(y_test, y_pred_rf):.2%}")
+print("\nRelatório de Classificação:")
+print(classification_report(y_test, y_pred_rf))
+print("\nMatriz de Confusão:")
+print(confusion_matrix(y_test, y_pred_rf))

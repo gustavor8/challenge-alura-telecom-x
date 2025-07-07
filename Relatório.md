@@ -60,3 +60,78 @@ Com base nas conclusões, sugere-se:
 3. **Promover o suporte técnico de forma ativa**, mostrando seus benefícios logo no início do relacionamento.
 4. **Rever políticas relacionadas ao pagamento por cheque eletrônico**, oferecendo alternativas mais vantajosas e acessíveis.
 5. **Criar canais exclusivos de atendimento e suporte digital simplificado para idosos**.
+
+---
+
+---
+
+# SEGUNDA PARTE DO DESAFIO
+
+---
+
+---
+
+# 🧩 Modelagem Preditiva e Análise de Importância das Variáveis -
+
+## Modelos Utilizados
+
+Foram treinados dois modelos complementares para prever a evasão de clientes:
+
+- **Regressão Logística:** Um modelo linear, escolhido por ser interpretável. Exige normalização das variáveis numéricas para equilibrar suas escalas, garantindo que nenhuma feature tenha peso desproporcional.
+- **Random Forest:** Um modelo de árvore de decisão em conjunto (ensemble), robusto para dados categóricos e numéricos. Não exige normalização, pois as árvores avaliam condições de corte por limiares.
+
+A divisão dos dados foi de **70% para treino** e **30% para teste**, garantindo a **estratificação da variável alvo**, mantendo a proporção original de evasão.
+
+---
+
+## Avaliação de Desempenho
+
+**Métricas principais utilizadas:**
+
+- **Acurácia:** Proporção geral de acertos.
+- **Precisão:** Proporção de acertos nos casos previstos como evasão.
+- **Recall:** Capacidade de capturar todos os clientes que realmente evadiram.
+- **F1-Score:** Equilíbrio entre Precisão e Recall.
+- **Matriz de Confusão:** Distribuição de verdadeiros positivos, falsos positivos, verdadeiros negativos e falsos negativos.
+
+Os resultados indicaram que:
+
+- **Random Forest apresentou maior Recall** em relação à Reg Logística, detectando mais casos de evasão, com ligeiro risco de falsos positivos.
+- **Regressão Logística teve precisão alta**, mas recall mais baixo, indicando maior segurança ao prever churn, porém menor abrangência.
+
+---
+
+## Análise das Variáveis
+
+**Regressão Logística:**  
+A análise dos **coeficientes** mostrou que:
+
+- Contrato Mensal, ausência de suporte técnico, método de pagamento por cheque eletrônico e ser idoso **aumentam a probabilidade de evasão**.
+- Contratos de maior duração ou pagamentos automáticos reduzem o risco.
+
+**Random Forest:**  
+A árvore indicou como **principais variáveis**:
+
+- **Tempo de Contrato:** fator de maior peso na divisão das árvores.
+- **Tipo de Contrato:** contratos mensais são mais propensos a churn.
+- **Método de Pagamento:** cheque eletrônico destacou-se como forte preditor.
+- **Suporte Técnico:** ausência impacta diretamente.
+
+Essas variáveis concentram as maiores contribuições para a redução da impureza (Gini).
+
+---
+
+## Conclusão da Modelagem
+
+Os modelos confirmam os padrões observados na exploração inicial:
+
+- **Combinar contrato mensal, baixo tempo de permanência, cheque eletrônico e ausência de suporte técnico** configura o perfil de **alto risco**.
+- É recomendável usar essas variáveis como **pilares para campanhas de retenção**, direcionando ofertas, comunicações e suporte personalizado.
+
+**Próximos passos sugeridos:**
+
+- Avaliar outros algoritmos como KNN e SVM para ampliar comparações.
+- Ajustar hiperparâmetros para reduzir possíveis sinais de overfitting.
+- Implantar o modelo em produção com monitoramento periódico do desempenho.
+
+---
